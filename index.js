@@ -1,22 +1,25 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 let name = 'Default Name'; // 현재 이름 상태
 
-// 정적 파일 제공 (Vue/React에서 빌드된 파일들을 나중에 여기에 추가할 수 있음)
-app.use(express.static('public'));
-
-// POST 요청으로 이름 업데이트
+// JSON 요청을 파싱할 수 있도록 설정
 app.use(express.json());
+
+// POST 요청으로 이름 업데이트 처리
 app.post('/name', (req, res) => {
-  name = req.body.name; // 새로운 이름 저장
-  io.emit('nameUpdated', name); // 모든 연결된 클라이언트에 이름 변경 이벤트 전송
-  res.status(200).send({ message: 'Name updated successfully!' });
+  const newName = req.body.name; // 요청으로 받은 새로운 이름
+  if (newName) {
+    name = newName; // 새로운 이름 저장
+    io.emit('nameUpdated', name); // 모든 연결된 클라이언트에 이름 변경 이벤트 전송
+    res.status(200).send({ message: 'Name updated successfully!' });
+  } else {
+    res.status(400).send({ message: 'Name is required' });
+  }
 });
 
 // WebSocket 연결 처리
