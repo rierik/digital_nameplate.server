@@ -1,11 +1,18 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const cors = require('cors'); // CORS 미들웨어 불러오기
+const cors = require('cors');
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5175', // 클라이언트의 도메인
+    methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true, // 쿠키를 허용하려면 true로 설정
+  },
+});
 
 let name = 'Default Name'; // 현재 이름 상태
 
