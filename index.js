@@ -1,11 +1,16 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
+const cors = require('cors'); // CORS 미들웨어 불러오기
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
 let name = 'Default Name'; // 현재 이름 상태
+
+// CORS 허용 설정
+app.use(cors());
 
 // JSON 요청을 파싱할 수 있도록 설정
 app.use(express.json());
